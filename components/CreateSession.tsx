@@ -38,7 +38,10 @@ const CreateSession = ({}) => {
           Something went wrong but it was not your fault
         </div>
       )}
-      <button className="p-4 m-4 rounded-lg bg-indigo-200" onClick={createRoom}>
+      <button
+        className="p-4 m-4 rounded-lg bg-indigo-200 hover:bg-indigo-100"
+        onClick={createRoom}
+      >
         Create session
       </button>
     </div>
