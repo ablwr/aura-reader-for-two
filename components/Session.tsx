@@ -1,5 +1,5 @@
 import { useDailyEvent } from '@daily-co/daily-react-hooks'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as faceapi from 'face-api.js'
 
 declare global {
@@ -9,21 +9,40 @@ declare global {
 }
 
 const CallObject = ({}) => {
+  const [errorMsg, setErrorMsg] = useState<string>('')
+
+  /*
+    Take care of any errors, send guidance and clarity
+  */
+
   function raiseError(msg: any): void {
-    const errorDiv = document.getElementById('call-error') as HTMLElement
-    errorDiv.innerText = `Something went wrong but its not your fault: ${JSON.stringify(
-      msg
-    )}`
+    if (msg.errorMsg) {
+      // e.g. "Meeting is full", can handle more precisely later
+      setErrorMsg(msg.errorMsg)
+    }
   }
+  useDailyEvent(
+    'error',
+    useCallback((ev) => {
+      console.log(`ev for raise err: ${JSON.stringify(ev)}`)
+      raiseError(ev)
+    }, [])
+  )
+
+  function handleLeftMeeting(msg: any): void {
+    console.log(`msg for left meeting: ${JSON.stringify(msg)}`)
+    // setErrorMsg('Meeting has ended or meeting is full')
+  }
+  useDailyEvent(
+    'left-meeting',
+    useCallback((ev) => {
+      handleLeftMeeting(ev)
+    }, [])
+  )
 
   /*
     Handle video
   */
-
-  useDailyEvent(
-    'error',
-    useCallback(() => raiseError, [])
-  )
 
   useDailyEvent(
     'track-started',
@@ -83,7 +102,6 @@ const CallObject = ({}) => {
   }
 
   let yourAuraColor = colorMixer()
-  let counter = 33
 
   /*
     Append aura zones within space
@@ -145,7 +163,7 @@ const CallObject = ({}) => {
           // We begin to sense the aura's delicate presence
           context.globalAlpha = 1
 
-          gradient.addColorStop(0, 'rgba(' + auraRegion.color + ',0.5)')
+          gradient.addColorStop(0, 'rgba(' + auraRegion.color + ',0.33)')
           gradient.addColorStop(0.6, 'rgba(' + auraRegion.color + ',0)')
 
           // To conclude, we paint the canvas
@@ -163,6 +181,10 @@ const CallObject = ({}) => {
   /*
     Create aura zones and apply them 
   */
+
+  // How many cycles will it take to reveal the truth?
+  let counter = 33
+
   function createAura(result: faceapi.FaceDetection) {
     let theCanvas = document.querySelectorAll('canvas')
     let ctx = []
@@ -252,6 +274,7 @@ const CallObject = ({}) => {
     // just a moment to get into position
     setTimeout(() => onPlay(), 2000)
   }
+
   // commence
   async function onPlay() {
     const vidElement = document.getElementById('other') as HTMLVideoElement
@@ -272,39 +295,50 @@ const CallObject = ({}) => {
   }
 
   return (
-    <div>
-      <div
-        id="otherContainer"
-        className="flex absolute top-0 left-0 pt-14 pb-5 w-full h-full"
-      >
-        <video
-          autoPlay
-          // commence henceforth or whatever
-          // when the partner has arrived
-          onPlay={() => {
-            prepareOnPlay()
-          }}
-          muted
-          id="other"
-          className="object-cover w-full h-full"
-        ></video>
-      </div>
-      <canvas
-        id="overlay"
-        className="flex absolute top-0 left-0 pt-14 pb-5 w-full h-full"
-      ></canvas>
-      <div
-        id="localContainer"
-        className="flex absolute bottom-0 right-0 w-60 h-60"
-      >
-        <video
-          autoPlay
-          muted
-          id="local"
-          className="absolute object-cover rounded-t-full bottom-0 right-0 w-60 h-60 flex p-4 m-4"
-        ></video>
-      </div>
-    </div>
+    <>
+      {errorMsg ? (
+        <div
+          id="error-msg"
+          className="flex absolute text-left text-xl text-white z-50"
+        >
+          {errorMsg}
+        </div>
+      ) : (
+        <div>
+          <div
+            id="otherContainer"
+            className="flex absolute top-0 left-0 pt-14 pb-5 w-full h-full"
+          >
+            <video
+              autoPlay
+              // commence henceforth or whatever
+              // when the partner has arrived
+              onPlay={() => {
+                prepareOnPlay()
+              }}
+              muted
+              id="other"
+              className="object-cover w-full h-full"
+            ></video>
+          </div>
+          <canvas
+            id="overlay"
+            className="flex absolute top-0 left-0 pt-14 pb-5 w-full h-full"
+          ></canvas>
+          <div
+            id="localContainer"
+            className="flex absolute bottom-0 right-0 w-60 h-60"
+          >
+            <video
+              autoPlay
+              muted
+              id="local"
+              className="absolute object-cover rounded-t-full bottom-0 right-0 w-60 h-60 flex p-4 m-4"
+            ></video>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 

@@ -7,8 +7,9 @@ const Home: NextPage = () => {
   return (
     <div className="flex flex-1 flex-col h-full w-full h-screen w-screen">
       <Header />
-      <main className="flex flex-1 items-center justify-center text-center bg-gradient-to-b from-indigo-500 to-indigo-300">
+      <main className="flex flex-1 flex-col items-center justify-center text-center bg-gradient-to-b from-indigo-500 to-indigo-300">
         <CreateSession />
+        <canvas id="todo-later"></canvas>
       </main>
       <Footer />
     </div>

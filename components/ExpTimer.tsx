@@ -1,27 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
-  exp: number | undefined
+  exp: Date | undefined
 }
 
 export const ExpTimer = ({ exp }: Props) => {
   const [secs, setSecs] = useState('--:--')
 
-  // If room has an expiry time, we'll calculate how many seconds until expiry
   useEffect((): (() => void) => {
-    if (!exp) {
-      return () => null
-    }
+    if (!exp) return () => null
+
     const interval = setInterval(() => {
-      const countdownClock = Math.round(exp - Date.now() / 1000)
-      if (countdownClock < 0) {
+      const count = Math.round((Date.parse(exp.toString()) - Date.now()) / 1000)
+      if (count < 0) {
         return setSecs('--:--')
       }
-      setSecs(
-        `${Math.floor(countdownClock / 60)}:${`0${countdownClock % 60}`.slice(
-          -2
-        )}`
-      )
+      setSecs(`${Math.floor(count / 60)}:${`0${count % 60}`.slice(-2)}`)
     }, 1000)
 
     return () => clearInterval(interval)
@@ -31,7 +25,11 @@ export const ExpTimer = ({ exp }: Props) => {
     setSecs('--:--')
   }
 
-  return <div className="p-2 m-2 rounded-lg bg-indigo-200">{secs}</div>
+  return (
+    <button className="absolute bottom-10 left-0 text-4xl p-2 m-4 rounded-lg text-indigo-500 bg-indigo-50 border-2 border-indigo-300 z-50">
+      {secs}
+    </button>
+  )
 }
 
 export default ExpTimer
