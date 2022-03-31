@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
@@ -38,8 +39,19 @@ const CreateSession = ({}) => {
           Something went wrong but it was not your fault
         </div>
       )}
+      <div className="mt-8">
+        <ul>
+          <li>Create a session</li>
+          <li>Send the link to your partner</li>
+          <li>Each describe the partner's aura as it appears</li>
+          <li></li>
+        </ul>
+      </div>
+      <div className="p-8">
+        <em>The experience lasts 5 minutes</em>
+      </div>
       <button
-        className="p-4 m-4 rounded-lg bg-indigo-200 hover:bg-indigo-100"
+        className="p-4 m-4 rounded-lg text-indigo-50 bg-indigo-500 hover:bg-indigo-200 hover:text-indigo-700 cursor-pointer"
         onClick={createRoom}
       >
         Create session

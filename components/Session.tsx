@@ -21,18 +21,19 @@ const CallObject = ({}) => {
       setErrorMsg(msg.errorMsg)
     }
   }
+
   useDailyEvent(
     'error',
     useCallback((ev) => {
-      console.log(`ev for raise err: ${JSON.stringify(ev)}`)
       raiseError(ev)
     }, [])
   )
 
   function handleLeftMeeting(msg: any): void {
-    console.log(`msg for left meeting: ${JSON.stringify(msg)}`)
-    // setErrorMsg('Meeting has ended or meeting is full')
+    // local participant has left the meeting
+    // "the end"
   }
+
   useDailyEvent(
     'left-meeting',
     useCallback((ev) => {
@@ -60,9 +61,28 @@ const CallObject = ({}) => {
   )
 
   /*
+    Start aura-building when partner joins
+  */
+  function prepareOnPlay() {
+    // allow just a moment to get into position
+    // after the partner has arrived
+    setTimeout(() => onPlay(), 2000)
+  }
+
+  useDailyEvent(
+    'participant-joined',
+    useCallback(() => {
+      const shareLink: HTMLElement = document.getElementById(
+        'shareLink'
+      ) as HTMLElement
+      shareLink.setAttribute('style', 'display:none')
+      prepareOnPlay()
+    }, [])
+  )
+
+  /*
     Load face models so the aura can shape around the partner's face
   */
-
   useEffect(() => {
     const loadModels = async () => {
       Promise.all([
@@ -270,11 +290,6 @@ const CallObject = ({}) => {
     })
   }
 
-  function prepareOnPlay() {
-    // just a moment to get into position
-    setTimeout(() => onPlay(), 2000)
-  }
-
   // commence
   async function onPlay() {
     const vidElement = document.getElementById('other') as HTMLVideoElement
@@ -294,6 +309,12 @@ const CallObject = ({}) => {
     setTimeout(() => onPlay(), 150)
   }
 
+  function getHref() {
+    if (typeof window !== 'undefined') {
+      return window.location.href
+    }
+  }
+
   return (
     <>
       {errorMsg ? (
@@ -311,11 +332,6 @@ const CallObject = ({}) => {
           >
             <video
               autoPlay
-              // commence henceforth or whatever
-              // when the partner has arrived
-              onPlay={() => {
-                prepareOnPlay()
-              }}
               muted
               id="other"
               className="object-cover w-full h-full"
@@ -325,6 +341,12 @@ const CallObject = ({}) => {
             id="overlay"
             className="flex absolute top-0 left-0 pt-14 pb-5 w-full h-full"
           ></canvas>
+          <button
+            id="shareLink"
+            className="p-4 m-4 rounded-lg bg-indigo-200 text-indigo-700 cursor-pointer"
+          >
+            Share this link: {getHref()}
+          </button>
           <div
             id="localContainer"
             className="flex absolute bottom-0 right-0 w-60 h-60"

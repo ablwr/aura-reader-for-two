@@ -6,9 +6,6 @@
     html {
         font-family: 'Fredoka';
     }
-}
-
-@responsive {
     h1 {
         text-shadow: 0 1px #312E81, 0 0 2px #312E81, 0 0 10px #C7D2FE;
         transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
