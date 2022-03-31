@@ -18,4 +18,4 @@ yarn dev
 
 Assuming all goes well, visit [http://localhost:3000](http://localhost:3000) with your browser.
 
-**N.B.: I know we are long past the era of "Best viewed in X browser", but the experience truly is more visually appearing when using Firefox due to how it handles the rendering of partially transparent gradient**
+**N.B.: I know we are long past the era of "Best viewed in X browser", but the experience truly is more visually appealing when using Firefox due to how it handles the rendering of partially transparent gradient**
