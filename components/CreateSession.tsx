@@ -39,19 +39,33 @@ const CreateSession = ({}) => {
           Something went wrong but it was not your fault
         </div>
       )}
-      <div className="mt-8">
+      <div className="mt-8 text-indigo-50 leading-10">
         <ul>
-          <li>Create a session</li>
-          <li>Send the link to your partner</li>
-          <li>Each describe the partner's aura as it appears</li>
+          <li className="m-6">
+            <span className="m-2 p-4 border-2 border-indigo-200 bg-indigo-500">
+              Create a session
+            </span>
+          </li>
+          <li className="m-6">
+            <span className="m-2 p-4 border-2 border-indigo-200 bg-indigo-500">
+              Send the link to your partner
+            </span>
+          </li>
+          <li className="m-6">
+            <span className="m-2 p-4 border-2 border-indigo-200 bg-indigo-500">
+              Describe your partner's aura as it appears
+            </span>
+          </li>
           <li></li>
         </ul>
       </div>
-      <div className="p-8">
-        <em>The experience lasts 5 minutes</em>
+      <div className="m-10 text-indigo-50 leading-10">
+        <em className="border-2 m-2 p-4 bg-indigo-500">
+          This experience lasts 5 minutes
+        </em>
       </div>
       <button
-        className="p-4 m-4 rounded-lg text-indigo-50 bg-indigo-500 hover:bg-indigo-200 hover:text-indigo-700 cursor-pointer"
+        className="p-4 border-2 border-indigo-200 bg-indigo-700 text-indigo-50 hover:bg-indigo-200 hover:text-indigo-500 cursor-pointer"
         onClick={createRoom}
       >
         Create session

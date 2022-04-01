@@ -39,10 +39,16 @@ const Home: NextPage = ({}) => {
       })
   }, [])
 
+  function getHref() {
+    if (typeof window !== 'undefined') {
+      return window.location.href
+    }
+  }
+
   return (
     <div className="flex flex-1 flex-col h-screen w-screen">
       <Header />
-      <main className="flex flex-1 flex-col items-center justify-center text-center bg-gradient-to-b from-indigo-500 to-indigo-300">
+      <main className="flex flex-1 flex-col items-center justify-center text-center bg-gradient-to-b from-indigo-600 to-indigo-300">
         {errorMsg && (
           <div id="error-msg" className="absolute text-xl text-white">
             {errorMsg}
@@ -51,6 +57,15 @@ const Home: NextPage = ({}) => {
         <DailyProvider callObject={callObject}>
           <Session />
         </DailyProvider>
+        {exp && (
+          <button
+            id="shareLink"
+            className="p-4 m-4 rounded-lg bg-indigo-200 text-indigo-700 cursor-pointer z-50"
+            onClick={() => navigator.clipboard.writeText(getHref() as string)}
+          >
+            Click to copy link: {getHref()}
+          </button>
+        )}
         <ExpTimer exp={exp} />
       </main>
       <Footer />

@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-const CallObject = ({}) => {
+const CallObject = () => {
   const [errorMsg, setErrorMsg] = useState<string>('')
 
   /*
@@ -53,9 +53,12 @@ const CallObject = ({}) => {
       if (e.participant.local) {
         let localVid = document.getElementById(`local`) as HTMLVideoElement
         localVid.srcObject = new MediaStream([e.participant.videoTrack])
+        // TODO : local audio ?
       } else {
         let otherVid = document.getElementById(`other`) as HTMLVideoElement
         otherVid.srcObject = new MediaStream([e.participant.videoTrack])
+        let otherAud = document.getElementById(`otherAud`) as HTMLAudioElement
+        otherAud.srcObject = new MediaStream([e.participant.audioTrack])
       }
     }, [])
   )
@@ -137,66 +140,72 @@ const CallObject = ({}) => {
     ratioCirclesX: number
     ratioCirclesY: number
   }
-  // TODO -- move into area where I don't have to run this window check
-  if (typeof window !== 'undefined') {
-    CanvasRenderingContext2D.prototype.appendAura = function (
-      auraRegion: auraRegionProps
-    ) {
-      // We align the aural plane with our partner's existance
-      let context: CanvasRenderingContext2D = this
 
-      // Get the positions relative to the partner's winsome face
+  /*
+    Load appendAura prototype
+  */
+  useEffect(() => {
+    const loadAuraAppend = async () => {
+      CanvasRenderingContext2D.prototype.appendAura = function (
+        auraRegion: auraRegionProps
+      ) {
+        // We align the aural plane with our partner's existance
+        let context: CanvasRenderingContext2D = this
 
-      for (let p = 0; p < auraRegion.position.length; p++) {
-        for (let i = 0; i < auraRegion.auraCircles; i++) {
-          // Auras must be pictured within their range of vision
-          let circRadius: number =
-            auraRegion.radius *
-            (Math.random() *
-              (auraRegion.circleRadiusRatio[1] -
-                auraRegion.circleRadiusRatio[0]) +
-              auraRegion.circleRadiusRatio[0])
+        // Get the positions relative to the partner's winsome face
 
-          // Intuit a randomized circle position within the Aura.
-          const angle = Math.random() * (Math.PI * 2)
-          const cx =
-            auraRegion.position[p][0] +
-            Math.random() *
-              Math.cos(angle) *
-              (auraRegion.radius - circRadius) *
-              auraRegion.ratioCirclesX
-          const cy =
-            auraRegion.position[p][1] +
-            Math.random() *
-              Math.sin(angle) *
-              (auraRegion.radius - circRadius) *
-              auraRegion.ratioCirclesY
-          const gradient = context.createRadialGradient(
-            cx,
-            cy,
-            0,
-            cx,
-            cy,
-            circRadius
-          )
+        for (let p = 0; p < auraRegion.position.length; p++) {
+          for (let i = 0; i < auraRegion.auraCircles; i++) {
+            // Auras must be pictured within their range of vision
+            let circRadius: number =
+              auraRegion.radius *
+              (Math.random() *
+                (auraRegion.circleRadiusRatio[1] -
+                  auraRegion.circleRadiusRatio[0]) +
+                auraRegion.circleRadiusRatio[0])
 
-          // We begin to sense the aura's delicate presence
-          context.globalAlpha = 1
+            // Intuit a randomized circle position within the Aura.
+            const angle = Math.random() * (Math.PI * 2)
+            const cx =
+              auraRegion.position[p][0] +
+              Math.random() *
+                Math.cos(angle) *
+                (auraRegion.radius - circRadius) *
+                auraRegion.ratioCirclesX
+            const cy =
+              auraRegion.position[p][1] +
+              Math.random() *
+                Math.sin(angle) *
+                (auraRegion.radius - circRadius) *
+                auraRegion.ratioCirclesY
+            const gradient = context.createRadialGradient(
+              cx,
+              cy,
+              0,
+              cx,
+              cy,
+              circRadius
+            )
 
-          gradient.addColorStop(0, 'rgba(' + auraRegion.color + ',0.33)')
-          gradient.addColorStop(0.6, 'rgba(' + auraRegion.color + ',0)')
+            // We begin to sense the aura's delicate presence
+            context.globalAlpha = 1
 
-          // To conclude, we paint the canvas
-          context.beginPath()
-          context.fillStyle = gradient
-          context.arc(cx, cy, circRadius, 0, Math.PI * 2, false)
-          context.fill()
-          context.closePath()
+            gradient.addColorStop(0, 'rgba(' + auraRegion.color + ',0.33)')
+            gradient.addColorStop(0.6, 'rgba(' + auraRegion.color + ',0)')
+
+            // To conclude, we paint the canvas
+            context.beginPath()
+            context.fillStyle = gradient
+            context.arc(cx, cy, circRadius, 0, Math.PI * 2, false)
+            context.fill()
+            context.closePath()
+          }
         }
+        return context
       }
-      return context
     }
-  }
+    loadAuraAppend()
+  }, [])
 
   /*
     Create aura zones and apply them 
@@ -309,12 +318,6 @@ const CallObject = ({}) => {
     setTimeout(() => onPlay(), 150)
   }
 
-  function getHref() {
-    if (typeof window !== 'undefined') {
-      return window.location.href
-    }
-  }
-
   return (
     <>
       {errorMsg ? (
@@ -336,17 +339,12 @@ const CallObject = ({}) => {
               id="other"
               className="object-cover w-full h-full"
             ></video>
+            <audio autoPlay muted id="otherAud" className="hidden"></audio>
           </div>
           <canvas
             id="overlay"
             className="flex absolute top-0 left-0 pt-14 pb-5 w-full h-full"
           ></canvas>
-          <button
-            id="shareLink"
-            className="p-4 m-4 rounded-lg bg-indigo-200 text-indigo-700 cursor-pointer"
-          >
-            Share this link: {getHref()}
-          </button>
           <div
             id="localContainer"
             className="flex absolute bottom-0 right-0 w-60 h-60"
@@ -355,7 +353,7 @@ const CallObject = ({}) => {
               autoPlay
               muted
               id="local"
-              className="absolute object-cover rounded-t-full bottom-0 right-0 w-60 h-60 flex p-4 m-4"
+              className="absolute object-cover rounded-t-full bottom-0 right-0 w-60 h-60 flex p-4 m-4 drop-shadow-2xl"
             ></video>
           </div>
         </div>
