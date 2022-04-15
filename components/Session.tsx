@@ -32,6 +32,7 @@ const CallObject = () => {
   function handleLeftMeeting(msg: any): void {
     // local participant has left the meeting
     // "the end"
+    // right now there's no way to "leave"
   }
 
   useDailyEvent(
@@ -53,7 +54,6 @@ const CallObject = () => {
       if (e.participant.local) {
         let localVid = document.getElementById(`local`) as HTMLVideoElement
         localVid.srcObject = new MediaStream([e.participant.videoTrack])
-        // TODO : local audio ?
       } else {
         let otherVid = document.getElementById(`other`) as HTMLVideoElement
         otherVid.srcObject = new MediaStream([e.participant.videoTrack])
@@ -80,6 +80,7 @@ const CallObject = () => {
       ) as HTMLElement
       shareLink.setAttribute('style', 'display:none')
       prepareOnPlay()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
   )
 
@@ -102,18 +103,18 @@ const CallObject = () => {
 
   // Chakra colors
   const colors = [
-    ['231, 24, 55'], // red
-    ['255,170,170'], // pink
-    ['255,0,255'], // magenta
-    ['252,147,3'], // orange
-    ['252,233,3'], // yellow
-    ['176,142,103'], // tan
-    ['73,182,117'], // green
-    ['14,75,239'], // blue
-    ['6,184,185'], // turquoise
-    ['75,0,130'], // indigo
-    ['104,77,119'], // violet
-    ['255,255,255'], // white
+    ['231, 24, 55'], // red : busy
+    ['255,170,170'], // pink : gentle
+    ['255,0,255'], // magenta : creative
+    ['252,147,3'], // orange : social
+    ['252,233,3'], // yellow : confident
+    ['176,142,103'], // tan : steady
+    ['73,182,117'], // green : growth
+    ['14,75,239'], // blue : peace
+    ['6,184,185'], // turquoise : empathy
+    ['75,0,130'], // indigo : intuition
+    ['104,77,119'], // violet : visionary
+    ['255,255,255'], // white : centered or in flux
   ]
 
   const colorMixer = function () {
@@ -124,7 +125,7 @@ const CallObject = () => {
     return arr
   }
 
-  let yourAuraColor = colorMixer()
+  let auraColors = colorMixer()
 
   /*
     Append aura zones within space
@@ -134,7 +135,6 @@ const CallObject = () => {
     position: number[][]
     radius: number
     color: string
-    colDelta: number
     auraCircles: number
     circleRadiusRatio: number[]
     ratioCirclesX: number
@@ -190,7 +190,7 @@ const CallObject = () => {
             // We begin to sense the aura's delicate presence
             context.globalAlpha = 1
 
-            gradient.addColorStop(0, 'rgba(' + auraRegion.color + ',0.33)')
+            gradient.addColorStop(0, 'rgba(' + auraRegion.color + ',0.3)')
             gradient.addColorStop(0.6, 'rgba(' + auraRegion.color + ',0)')
 
             // To conclude, we paint the canvas
@@ -231,17 +231,21 @@ const CallObject = () => {
     let h = result._box._height
 
     /*
-      the five aura areas: right, left, top, throat, heart
+      the five aura areas: right, left, top, throat, core
+        (their) right : leaving energy
+        (their) left : arriving energy
+        top : present energy
+        throat : communicated energy
+        core : heart energy
     */
 
     // right side
     ctx[0]?.appendAura({
       position: [[x + w + 100, y + h / 2 - 50]],
       radius: h + 150,
-      color: yourAuraColor[0],
-      colDelta: 50,
+      color: auraColors[0],
       auraCircles: 1,
-      circleRadiusRatio: [0.1, 0.888],
+      circleRadiusRatio: [0.1, 0.7],
       ratioCirclesX: 0.5,
       ratioCirclesY: 0.5,
     })
@@ -250,10 +254,9 @@ const CallObject = () => {
     ctx[0]?.appendAura({
       position: [[x - 100, y + h / 2 - 50]],
       radius: h + 150,
-      color: yourAuraColor[1],
-      colDelta: 50,
+      color: auraColors[1],
       auraCircles: 1,
-      circleRadiusRatio: [0.1, 0.888],
+      circleRadiusRatio: [0.1, 0.7],
       ratioCirclesX: 0.5,
       ratioCirclesY: 0.5,
     })
@@ -266,10 +269,9 @@ const CallObject = () => {
         [x + w / 2 + 150, y - 100],
       ],
       radius: w + 150,
-      color: yourAuraColor[2],
-      colDelta: 50,
+      color: auraColors[2],
       auraCircles: 1,
-      circleRadiusRatio: [0.1, 0.888],
+      circleRadiusRatio: [0.1, 0.7],
       ratioCirclesX: 0.5,
       ratioCirclesY: 0.5,
     })
@@ -278,22 +280,20 @@ const CallObject = () => {
     ctx[0]?.appendAura({
       position: [[x + w / 2, y + h - 10]],
       radius: w - 30,
-      color: yourAuraColor[4],
-      colDelta: 50,
+      color: auraColors[4],
       auraCircles: 1,
       circleRadiusRatio: [0.1, 0.6],
       ratioCirclesX: 0.25,
       ratioCirclesY: 0.25,
     })
 
-    // heart
+    // core
     ctx[0]?.appendAura({
       position: [[x + w / 2, y + h + 30]],
       radius: w + 75,
-      color: yourAuraColor[5],
-      colDelta: 50,
+      color: auraColors[5],
       auraCircles: 1,
-      circleRadiusRatio: [0.1, 0.888],
+      circleRadiusRatio: [0.1, 0.7],
       ratioCirclesX: 0.5,
       ratioCirclesY: 0.5,
     })
@@ -323,7 +323,7 @@ const CallObject = () => {
       {errorMsg ? (
         <div
           id="error-msg"
-          className="flex absolute text-left text-xl text-white z-50"
+          className="flex absolute text-left text-2xl text-white z-50"
         >
           {errorMsg}
         </div>
@@ -339,7 +339,7 @@ const CallObject = () => {
               id="other"
               className="object-cover w-full h-full"
             ></video>
-            <audio autoPlay muted id="otherAud" className="hidden"></audio>
+            <audio autoPlay muted id="otherAud"></audio>
           </div>
           <canvas
             id="overlay"
@@ -353,7 +353,7 @@ const CallObject = () => {
               autoPlay
               muted
               id="local"
-              className="absolute object-cover rounded-t-full bottom-0 right-0 w-60 h-60 flex p-4 m-4 drop-shadow-2xl"
+              className="absolute object-cover rounded-l-full bottom-0 right-0 w-21 h-21 md:w-60 md:h-60"
             ></video>
           </div>
         </div>

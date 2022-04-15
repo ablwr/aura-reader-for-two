@@ -7,6 +7,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   let randomWords = require('random-words')
+  let wordsString = randomWords({
+    exactly: 1,
+    wordsPerString: 3,
+    separator: '-',
+  }).pop()
 
   if (req.method === 'POST') {
     const opts = {
@@ -17,11 +22,7 @@ export default async function handler(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: randomWords({
-          exactly: 1,
-          wordsPerString: 3,
-          separator: '-',
-        }).pop(),
+        name: wordsString,
         privacy: 'public',
         properties: {
           // Expire room after 5 minutes
@@ -39,7 +40,7 @@ export default async function handler(
     const dailyRes = await fetch(`${process.env.DAILY_REST_DOMAIN}/rooms`, opts)
     const response = await dailyRes.json()
 
-    // testing -- mock json
+    // TODO testing -- mock json
     // const response = { name: 'aura', config: { exp: 99999999 } }
 
     if (response.error) {

@@ -48,7 +48,7 @@ const Home: NextPage = ({}) => {
   return (
     <div className="flex flex-1 flex-col h-screen w-screen">
       <Header />
-      <main className="flex flex-1 flex-col items-center justify-center text-center bg-gradient-to-b from-indigo-600 to-indigo-300">
+      <main className="flex flex-1 flex-col items-center justify-center text-center bg-gradient-to-b from-indigo-900 to-indigo-300">
         {errorMsg && (
           <div id="error-msg" className="absolute text-xl text-white">
             {errorMsg}
@@ -57,7 +57,7 @@ const Home: NextPage = ({}) => {
         <DailyProvider callObject={callObject}>
           <Session />
         </DailyProvider>
-        {exp && (
+        {exp && !errorMsg && (
           <button
             id="shareLink"
             className="p-4 m-4 rounded-lg bg-indigo-200 text-indigo-700 cursor-pointer z-50"

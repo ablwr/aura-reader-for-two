@@ -5,7 +5,7 @@ type Props = {
 }
 
 export const ExpTimer = ({ exp }: Props) => {
-  const [secs, setSecs] = useState('--:--')
+  const [secs, setSecs] = useState('-:--')
 
   useEffect((): (() => void) => {
     if (!exp) return () => null
@@ -13,7 +13,7 @@ export const ExpTimer = ({ exp }: Props) => {
     const interval = setInterval(() => {
       const count = Math.round((Date.parse(exp.toString()) - Date.now()) / 1000)
       if (count < 0) {
-        return setSecs('--:--')
+        return setSecs('-:--')
       }
       setSecs(`${Math.floor(count / 60)}:${`0${count % 60}`.slice(-2)}`)
     }, 1000)
@@ -22,11 +22,11 @@ export const ExpTimer = ({ exp }: Props) => {
   }, [exp])
 
   if (!secs) {
-    setSecs('--:--')
+    setSecs('-:--')
   }
 
   return (
-    <button className="absolute bottom-8 left-0 text-4xl p-2 m-2 text-indigo-500 bg-indigo-50 border-2 border-indigo-300 z-50">
+    <button className="absolute bottom-4 font-mono rounded-r-full left-0 text-3xl p-3 text-indigo-700 bg-indigo-200 border-2 border-indigo-200 cursor-default z-50">
       {secs}
     </button>
   )

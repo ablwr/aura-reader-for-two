@@ -8,7 +8,7 @@ const CreateSession = ({}) => {
 
   const createRoom = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/room', {
+      const res = await fetch('/api/room', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,35 +41,18 @@ const CreateSession = ({}) => {
       )}
       <div className="mt-8 text-indigo-50 leading-10">
         <ul>
-          <li className="m-6">
-            <span className="m-2 p-4 border-2 border-indigo-200 bg-indigo-500">
-              Create a session
-            </span>
-          </li>
-          <li className="m-6">
-            <span className="m-2 p-4 border-2 border-indigo-200 bg-indigo-500">
-              Send the link to your partner
-            </span>
-          </li>
-          <li className="m-6">
-            <span className="m-2 p-4 border-2 border-indigo-200 bg-indigo-500">
-              Describe your partner's aura as it appears
-            </span>
-          </li>
-          <li></li>
+          <li className="mt-6">Create a session</li>
+          <li className="mt-6">Send the link to your partner</li>
+          <li className="mt-6">Describe your partner's aura as it appears</li>
+          <button
+            className="p-2 mt-6 border-2 rounded-md border-indigo-200 bg-indigo-600 text-indigo-50 hover:bg-indigo-200 hover:text-indigo-200 cursor-pointer"
+            onClick={createRoom}
+          >
+            Create session
+          </button>
+          <li className="">This experience lasts 5 minutes</li>
         </ul>
       </div>
-      <div className="m-10 text-indigo-50 leading-10">
-        <em className="border-2 m-2 p-4 bg-indigo-500">
-          This experience lasts 5 minutes
-        </em>
-      </div>
-      <button
-        className="p-4 border-2 border-indigo-200 bg-indigo-700 text-indigo-50 hover:bg-indigo-200 hover:text-indigo-500 cursor-pointer"
-        onClick={createRoom}
-      >
-        Create session
-      </button>
     </div>
   )
 }
