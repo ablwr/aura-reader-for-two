@@ -67,7 +67,7 @@ const CallObject = () => {
     Start aura-building when partner joins
   */
   function prepareOnPlay() {
-    // allow just a moment to get into positionhttp://localhost:3000/sessions/aura
+    // allow just a moment to get into position
     // after the partner has arrived
     setTimeout(() => onPlay(), 2000)
   }
@@ -200,15 +200,6 @@ const CallObject = () => {
 
     return auraRegion.context
   }
-
-  /*
-    the five aura areas: right, left, top, throat, core
-      (their) right : leaving energy
-      (their) left : arriving energy
-      top : present energy
-      throat : communicated energy
-      core : heart energy
-  */
 
   function createAura(
     detections: faceapi.WithFaceLandmarks<
