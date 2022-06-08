@@ -67,7 +67,7 @@ const CallObject = () => {
     Start aura-building when partner joins
   */
   function prepareOnPlay() {
-    // allow just a moment to get into position
+    // allow just a moment to get into positionhttp://localhost:3000/sessions/aura
     // after the partner has arrived
     setTimeout(() => onPlay(), 2000)
   }
@@ -89,7 +89,7 @@ const CallObject = () => {
   */
   useEffect(() => {
     const loadModels = async () => {
-      Promise.all([
+      await Promise.all([
         faceapi.loadTinyFaceDetectorModel('/models'),
         faceapi.loadFaceLandmarkTinyModel('/models'),
       ])
@@ -132,9 +132,10 @@ const CallObject = () => {
   */
 
   type auraRegionProps = {
+    context: any
     position: number[][]
     radius: number
-    color: string
+    color: string[]
     auraCircles: number
     circleRadiusRatio: number[]
     ratioCirclesX: number
@@ -142,93 +143,97 @@ const CallObject = () => {
   }
 
   /*
-    Load appendAura prototype
-  */
-  useEffect(() => {
-    const loadAuraAppend = async () => {
-      CanvasRenderingContext2D.prototype.appendAura = function (
-        auraRegion: auraRegionProps
-      ) {
-        // We align the aural plane with our partner's existance
-        let context: CanvasRenderingContext2D = this
-
-        // Get the positions relative to the partner's winsome face
-
-        for (let p = 0; p < auraRegion.position.length; p++) {
-          for (let i = 0; i < auraRegion.auraCircles; i++) {
-            // Auras must be pictured within their range of vision
-            let circRadius: number =
-              auraRegion.radius *
-              (Math.random() *
-                (auraRegion.circleRadiusRatio[1] -
-                  auraRegion.circleRadiusRatio[0]) +
-                auraRegion.circleRadiusRatio[0])
-
-            // Intuit a randomized circle position within the Aura.
-            const angle = Math.random() * (Math.PI * 2)
-            const cx =
-              auraRegion.position[p][0] +
-              Math.random() *
-                Math.cos(angle) *
-                (auraRegion.radius - circRadius) *
-                auraRegion.ratioCirclesX
-            const cy =
-              auraRegion.position[p][1] +
-              Math.random() *
-                Math.sin(angle) *
-                (auraRegion.radius - circRadius) *
-                auraRegion.ratioCirclesY
-            const gradient = context.createRadialGradient(
-              cx,
-              cy,
-              0,
-              cx,
-              cy,
-              circRadius
-            )
-
-            // We begin to sense the aura's delicate presence
-            context.globalAlpha = 1
-
-            gradient.addColorStop(0, 'rgba(' + auraRegion.color + ',0.3)')
-            gradient.addColorStop(0.6, 'rgba(' + auraRegion.color + ',0)')
-
-            // To conclude, we paint the canvas
-            context.beginPath()
-            context.fillStyle = gradient
-            context.arc(cx, cy, circRadius, 0, Math.PI * 2, false)
-            context.fill()
-            context.closePath()
-          }
-        }
-        return context
-      }
-    }
-    loadAuraAppend()
-  }, [])
-
-  /*
     Create aura zones and apply them 
   */
 
-  // How many cycles will it take to reveal the truth?
-  let counter = 33
+  function appendAura(auraRegion: auraRegionProps) {
+    // We align the aural plane with our partner's existence
 
-  function createAura(result: faceapi.FaceDetection) {
-    let theCanvas = document.querySelectorAll('canvas')
-    let ctx = []
-    let i = theCanvas.length
-    while (i--) {
-      ctx[i] = theCanvas[i].getContext('2d')
+    // Get the positions relative to the partner's winsome face
+    for (let p = 0; p < auraRegion.position.length; p++) {
+      for (let i = 0; i < auraRegion.auraCircles; i++) {
+        // Auras must be pictured within their range of vision
+        let circRadius: number =
+          auraRegion.radius *
+          (1.5 *
+            (auraRegion.circleRadiusRatio[1] -
+              auraRegion.circleRadiusRatio[0]) +
+            auraRegion.circleRadiusRatio[0])
+
+        // Intuit a randomized circle position within the Aura
+        const angle = 0.9 * (Math.PI * 2)
+        const cx =
+          auraRegion.position[p][0] +
+          0.9 *
+            Math.cos(angle) *
+            (auraRegion.radius - circRadius) *
+            auraRegion.ratioCirclesX
+        const cy =
+          auraRegion.position[p][1] +
+          0.9 *
+            Math.sin(angle) *
+            (auraRegion.radius - circRadius) *
+            auraRegion.ratioCirclesY
+        const gradient = auraRegion.context.createRadialGradient(
+          cx,
+          cy,
+          0,
+          cx,
+          cy,
+          circRadius
+        )
+
+        // We begin to sense the aura's delicate presence
+        auraRegion.context.globalAlpha = 1
+
+        gradient.addColorStop(0, 'rgba(' + auraRegion.color + ',0.5)')
+        gradient.addColorStop(0.9, 'rgba(' + auraRegion.color + ',0)')
+
+        // To conclude, we paint the canvas
+        auraRegion.context.beginPath()
+        auraRegion.context.fillStyle = gradient
+        auraRegion.context.arc(cx, cy, circRadius, 0, Math.PI * 2, false)
+        auraRegion.context.fill()
+        auraRegion.context.closePath()
+      }
     }
-    // @ts-ignore: I _will_ reach into the internals
-    let x = result._box._x
-    // @ts-ignore: for I am attempting to capture
-    let y = result._box._y
-    // @ts-ignore: my partner's true disposition
-    let w = result._box._width
-    // @ts-ignore: and I heed no warnings against this
-    let h = result._box._height
+
+    return auraRegion.context
+  }
+
+  /*
+    the five aura areas: right, left, top, throat, core
+      (their) right : leaving energy
+      (their) left : arriving energy
+      top : present energy
+      throat : communicated energy
+      core : heart energy
+  */
+
+  function createAura(
+    detections: faceapi.WithFaceLandmarks<
+      { detection: faceapi.FaceDetection },
+      faceapi.FaceLandmarks68
+    >
+  ) {
+    const canvas = document.getElementById('overlay') as HTMLCanvasElement
+
+    const displaySize = { width: window.innerWidth, height: window.innerHeight }
+    faceapi.matchDimensions(canvas, displaySize)
+
+    const resizedDetections = faceapi.resizeResults(detections, displaySize)
+
+    // x,y = size of video display
+    const x: number = resizedDetections.detection.box.x
+    const y: number = resizedDetections.detection.box.y
+    // w,h = size of face, in pixels
+    const w: number = resizedDetections.detection.box.width
+    const h: number = resizedDetections.detection.box.height
+
+    canvas.width = displaySize.width
+    canvas.height = displaySize.height
+
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D
 
     /*
       the five aura areas: right, left, top, throat, core
@@ -240,8 +245,13 @@ const CallObject = () => {
     */
 
     // right side
-    ctx[0]?.appendAura({
-      position: [[x + w + 100, y + h / 2 - 50]],
+    appendAura({
+      context: context,
+      position: [
+        [x + w + 100, y + h / 2 - 100],
+        [x + w + 100, y + h / 2 - 50],
+        [x + w + 100, y + h / 2 - 150],
+      ],
       radius: h + 150,
       color: auraColors[0],
       auraCircles: 1,
@@ -251,8 +261,13 @@ const CallObject = () => {
     })
 
     // left side
-    ctx[0]?.appendAura({
-      position: [[x - 100, y + h / 2 - 50]],
+    appendAura({
+      context: context,
+      position: [
+        [x - 100, y + h / 2 - 100],
+        [x - 100, y + h / 2 - 50],
+        [x - 100, y + h / 2 - 150],
+      ],
       radius: h + 150,
       color: auraColors[1],
       auraCircles: 1,
@@ -262,7 +277,8 @@ const CallObject = () => {
     })
 
     // top of head, top of mind
-    ctx[0]?.appendAura({
+    appendAura({
+      context: context,
       position: [
         [x + w / 2 - 150, y - 100],
         [x + w / 2, y - 100],
@@ -277,7 +293,8 @@ const CallObject = () => {
     })
 
     // throat
-    ctx[0]?.appendAura({
+    appendAura({
+      context: context,
       position: [[x + w / 2, y + h - 10]],
       radius: w - 30,
       color: auraColors[4],
@@ -288,8 +305,13 @@ const CallObject = () => {
     })
 
     // core
-    ctx[0]?.appendAura({
-      position: [[x + w / 2, y + h + 30]],
+    appendAura({
+      context: context,
+      position: [
+        [x + w / 2 - 150, y + h + 150],
+        [x + w / 2, y + h + 150],
+        [x + w / 2 + 150, y + h + 150],
+      ],
       radius: w + 75,
       color: auraColors[5],
       auraCircles: 1,
@@ -301,21 +323,18 @@ const CallObject = () => {
 
   // commence
   async function onPlay() {
-    const vidElement = document.getElementById('other') as HTMLVideoElement
+    const input = document.getElementById('other') as HTMLVideoElement
+    const model = new faceapi.TinyFaceDetectorOptions()
+    const detections = await faceapi
+      .detectSingleFace(input, model)
+      .withFaceLandmarks(true)
 
-    let result = await faceapi.detectSingleFace(
-      vidElement,
-      new faceapi.TinyFaceDetectorOptions()
-    )
-
-    if (result) {
-      if (counter > 0) {
-        createAura(result)
-        counter--
-      }
+    if (detections) {
+      createAura(detections)
     }
-    // The aura is revealed through a small amount of patience
-    setTimeout(() => onPlay(), 150)
+
+    // The aura is revealed only through a small amount of patience
+    setTimeout(() => onPlay(), 200)
   }
 
   return (
