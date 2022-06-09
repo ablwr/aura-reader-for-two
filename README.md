@@ -1,6 +1,10 @@
-# Aura Reader for two
+# [Aura Reader for two](https://bits.ashleyblewer.com/aura-reader-for-two)
+by [Ashley Blewer](https://ashleyblewer.com)
 
-Uses [Daily](https://daily.co), [Next.js](https://nextjs.org), [TypeScript](https://www.typescriptlang.org/), [Tailwind](https://tailwindcss.com/), and the chemistry between you and someone you care about. Based on the solo version of this project, [aura-reader-2020](https://github.com/ablwr/aura-reader-2020).
+
+Uses [Daily](https://daily.co), [Next.js](https://nextjs.org), [TypeScript](https://www.typescriptlang.org/), [Tailwind](https://tailwindcss.com/), and the chemistry between you and someone you care about. 
+
+Based on the solo version of this project, [aura-reader-2020](https://github.com/ablwr/aura-reader-2020).
 
 ## Running locally
 
@@ -17,5 +21,3 @@ yarn dev
 ```
 
 Assuming all goes well, visit [http://localhost:3000](http://localhost:3000) with your browser.
-
-**N.B.: I know we are long past the era of "Best viewed in X browser", but the experience truly is more visually appealing when using Firefox due to how it handles the rendering of partially transparent gradient**

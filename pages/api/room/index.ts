@@ -40,9 +40,6 @@ export default async function handler(
     const dailyRes = await fetch(`${process.env.DAILY_REST_DOMAIN}/rooms`, opts)
     const response = await dailyRes.json()
 
-    // TODO testing -- mock json
-    // const response = { name: 'aura', config: { exp: 99999999 } }
-
     if (response.error) {
       return res.status(500).json(response.error)
     }

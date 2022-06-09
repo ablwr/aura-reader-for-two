@@ -147,8 +147,6 @@ const CallObject = () => {
   */
 
   function appendAura(auraRegion: auraRegionProps) {
-    // We align the aural plane with our partner's existence
-
     // Get the positions relative to the partner's winsome face
     for (let p = 0; p < auraRegion.position.length; p++) {
       for (let i = 0; i < auraRegion.auraCircles; i++) {
@@ -227,7 +225,7 @@ const CallObject = () => {
     const context = canvas.getContext('2d') as CanvasRenderingContext2D
 
     /*
-      the five aura areas: right, left, top, throat, core
+      there are five aura areas: right, left, top, throat, core
         (their) right : leaving energy
         (their) left : arriving energy
         top : present energy
@@ -283,25 +281,13 @@ const CallObject = () => {
       ratioCirclesY: 0.5,
     })
 
-    // throat
-    appendAura({
-      context: context,
-      position: [[x + w / 2, y + h - 10]],
-      radius: w - 30,
-      color: auraColors[4],
-      auraCircles: 1,
-      circleRadiusRatio: [0.1, 0.6],
-      ratioCirclesX: 0.25,
-      ratioCirclesY: 0.25,
-    })
-
     // core
     appendAura({
       context: context,
       position: [
-        [x + w / 2 - 150, y + h + 150],
-        [x + w / 2, y + h + 150],
-        [x + w / 2 + 150, y + h + 150],
+        [x + w / 2 - 150, y + h + 175],
+        [x + w / 2, y + h + 175],
+        [x + w / 2 + 150, y + h + 175],
       ],
       radius: w + 75,
       color: auraColors[5],
@@ -309,6 +295,18 @@ const CallObject = () => {
       circleRadiusRatio: [0.1, 0.7],
       ratioCirclesX: 0.5,
       ratioCirclesY: 0.5,
+    })
+
+    // throat
+    appendAura({
+      context: context,
+      position: [[x + w / 2, y + h - 10]],
+      radius: w,
+      color: auraColors[4],
+      auraCircles: 1,
+      circleRadiusRatio: [0.1, 0.6],
+      ratioCirclesX: 0.25,
+      ratioCirclesY: 0.25,
     })
   }
 
@@ -320,6 +318,7 @@ const CallObject = () => {
       .detectSingleFace(input, model)
       .withFaceLandmarks(true)
 
+    // We align the aural plane with our partner's existence
     if (detections) {
       createAura(detections)
     }
@@ -363,7 +362,7 @@ const CallObject = () => {
               autoPlay
               muted
               id="local"
-              className="absolute object-cover rounded-l-full bottom-0 right-0 w-21 h-21 md:w-60 md:h-60"
+              className="absolute object-cover rounded-l-full bottom-10 right-0 w-21 h-21 md:w-60 md:h-60 md:bottom-10"
             ></video>
           </div>
         </div>

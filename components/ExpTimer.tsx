@@ -26,7 +26,7 @@ export const ExpTimer = ({ exp }: Props) => {
   }
 
   return (
-    <button className="absolute bottom-4 font-mono rounded-r-full left-0 text-3xl p-3 text-indigo-700 bg-indigo-200 border-2 border-indigo-200 cursor-default z-50">
+    <button className="absolute bottom-12 font-mono rounded-r-full left-0 text-3xl p-3 text-indigo-700 bg-indigo-200 border-2 border-indigo-200 cursor-default z-50">
       {secs}
     </button>
   )
