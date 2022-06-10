@@ -324,7 +324,7 @@ const CallObject = () => {
     }
 
     // The aura is revealed only through a small amount of patience
-    setTimeout(() => onPlay(), 200)
+    setTimeout(() => onPlay(), 50)
   }
 
   return (
