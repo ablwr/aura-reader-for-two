@@ -1,4 +1,4 @@
-# [Aura Reader for two](https://bits.ashleyblewer.com/aura-reader-for-two)
+# [Aura Reader for two](https://aura-reader-for-two.vercel.app/)
 by [Ashley Blewer](https://ashleyblewer.com)
 
 
