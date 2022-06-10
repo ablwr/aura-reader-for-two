@@ -33,7 +33,13 @@ const Footer = ({}) => {
   )
 
   return (
-    <footer className="p-2 text-lg text-center gap-4 italic bg-indigo-300 text-indigo-800 z-50">
+    <footer className="p-2 text-lg text-center gap-4 bg-indigo-300 text-indigo-800 z-50">
+      <a
+        className="bg-indigo-300 text-xl float-left"
+        href="https://github.com/ablwr/aura-reader-for-two"
+      >
+        🔮
+      </a>
       <div className="cursor-pointer" onClick={toggleRevealMeanings}>
         Color/position meanings
         {showMeanings ? <Meanings /> : <div></div>}

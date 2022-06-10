@@ -348,7 +348,7 @@ const CallObject = () => {
               id="other"
               className="object-cover w-full h-full"
             ></video>
-            <audio autoPlay muted id="otherAud"></audio>
+            <audio autoPlay id="otherAud"></audio>
           </div>
           <canvas
             id="overlay"
@@ -362,7 +362,7 @@ const CallObject = () => {
               autoPlay
               muted
               id="local"
-              className="absolute object-cover rounded-l-full bottom-10 right-0 w-21 h-21 md:w-60 md:h-60 md:bottom-10"
+              className="absolute object-cover rounded-l-full bottom-10 right-0 w-32 h-32 md:w-60 md:h-60 md:bottom-10"
             ></video>
           </div>
         </div>
